@@ -1,0 +1,8 @@
+[workspace]
+members = [
+    "host-agent",
+    "signaling-server",
+    "shared",
+    "client-app/src-tauri",
+]
+resolver = "2"
