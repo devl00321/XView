@@ -52,6 +52,7 @@ async fn run_agent(device_id: &str, token: &str, url: &str) -> Result<()> {
     let reg_msg = SignalingMessage::RegisterHost {
         device_id: device_id.to_string(),
         token: token.to_string(),
+        jwt: String::new(),
     };
     write
         .send(Message::Text(serde_json::to_string(&reg_msg)?.into()))
@@ -251,13 +252,21 @@ fn handle_control_message(data: &[u8]) {
                 ControlMessage::MouseMove { x, y } => {
                     let _ = enigo.move_mouse(x, y, Coordinate::Abs);
                 }
-                ControlMessage::MouseClick { button } => {
+                ControlMessage::MouseDown { button } => {
                     let btn = match button {
                         MouseButton::Left => enigo::Button::Left,
                         MouseButton::Right => enigo::Button::Right,
                         MouseButton::Middle => enigo::Button::Middle,
                     };
-                    let _ = enigo.button(btn, enigo::Direction::Click);
+                    let _ = enigo.button(btn, enigo::Direction::Press);
+                }
+                ControlMessage::MouseUp { button } => {
+                    let btn = match button {
+                        MouseButton::Left => enigo::Button::Left,
+                        MouseButton::Right => enigo::Button::Right,
+                        MouseButton::Middle => enigo::Button::Middle,
+                    };
+                    let _ = enigo.button(btn, enigo::Direction::Release);
                 }
                 ControlMessage::MouseScroll { dx, dy } => {
                     let _ = enigo.scroll(dx, enigo::Axis::Horizontal);
